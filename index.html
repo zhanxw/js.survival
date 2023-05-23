@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo</title>
+</head>
+
+<body>
+  <script src="./dist/index_bundle.js"></script>
+  <script>
+    console.log($);
+    // alert($.capital("hridayesh"));
+    // $.addDOMContent("It works I think!!!");
+
+    var d = [{"tte": [59,115,156,431,448,477,638,803,855,1040,1106,268,329], "ev": [1,1,1,1,0,0,1,0,0,0,0,1,1]},
+             {"tte": [421,464,475,563,744,769,770,1129,1206,1227,353,365,377] , "ev": [0,1,1,1,0,0,0,0,0,0,1,1,0] }];
+    console.log("data = ", d);
+    console.log($.logranktest(d));
+    console.log($.compute(d[0]['tte'], d[0]['ev']));
+
+    var r0 = $.compute(d[0]['tte'], d[0]['ev']);
+    var r1 = $.compute(d[1]['tte'], d[1]['ev']);
+    var d0 = [[0, 1]].concat(r0.map(function(x) { return [x['t'], x['s']]}));
+    var d1 = [[0, 1]].concat(r1.map(function(x) { return [x['t'], x['s']]}));
+  </script>
+   <div id="chart-container"></div>
+   <script src="https://fastly.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+
+
+<div id="main" style="width: 800px;height:600px;"></div>
+<script type="text/javascript">
+  // Initialize the echarts instance based on the prepared dom
+  var myChart = echarts.init(document.getElementById('main'));
+
+  var option;
+
+option = {
+  title: {
+    text: 'Survival curves'
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {}, 
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'value'
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      name: 'RX=1',
+      type: 'line',
+      step: 'start',
+      data: d0
+    },
+    {
+      name: 'RX=2',
+      type: 'line',
+      step: 'start',
+      data: d1
+    }
+  ]
+};
+
+if (option && typeof option === 'object') {
+  myChart.setOption(option);
+}
+
+window.addEventListener('resize', myChart.resize);
+</script>
+
+</body>
+
+</html>
