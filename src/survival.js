@@ -29,8 +29,8 @@ function transpose(a) {
 // ev:  [boolean, ...]
 // returns: [{n, e, d, t}, ...]
 function timeTable(tte, ev) {
-    console.log("tte = ", tte);
-    console.log("ev = ", ev);
+    // console.log("tte = ", tte);
+    // console.log("ev = ", ev);
 	var exits = _.sortBy(tte.map((x, i) => ({ tte: x, ev: ev[i] })), 'tte'), // sort and collate
 		uexits = _.uniq(_.pluck(exits, 'tte'), true),                // unique tte
 		gexits = _.groupBy(exits, x => x.tte);                     // group by common time of exit
@@ -187,7 +187,7 @@ function solve(a, b) {
 }
 
 function allGroupsKm(groups) {
-    console.log("groups = ", groups);
+    // console.log("groups = ", groups);
 	// var tte = Array.concat.apply([], _.pluck(groups, 'tte')),
 	// 	ev = Array.concat.apply([], _.pluck(groups, 'ev'));
     var tte = Array.prototype.concat.apply([], _.pluck(groups, 'tte')),

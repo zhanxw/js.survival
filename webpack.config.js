@@ -5,7 +5,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index_bundle.js',
-    library: '$',
+    library: 'survival',
     libraryTarget: 'umd',
   },
   module: {

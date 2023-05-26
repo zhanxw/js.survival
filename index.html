@@ -5,23 +5,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Demo</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
 </head>
 
 <body>
   <script src="./dist/index_bundle.js"></script>
   <script>
-    console.log($);
-    // alert($.capital("hridayesh"));
-    // $.addDOMContent("It works I think!!!");
+    // console.log(survival);
+    // alert(survival.capital("hridayesh"));
+    // survival.addDOMContent("It works I think!!!");
 
+    var groupLabel = ["Group 1", "Group 2"];
     var d = [{"tte": [59,115,156,431,448,477,638,803,855,1040,1106,268,329], "ev": [1,1,1,1,0,0,1,0,0,0,0,1,1]},
              {"tte": [421,464,475,563,744,769,770,1129,1206,1227,353,365,377] , "ev": [0,1,1,1,0,0,0,0,0,0,1,1,0] }];
     console.log("data = ", d);
-    console.log($.logranktest(d));
-    console.log($.compute(d[0]['tte'], d[0]['ev']));
+    console.log(survival.logranktest(d));
+    console.log(survival.compute(d[0]['tte'], d[0]['ev']));
 
-    var r0 = $.compute(d[0]['tte'], d[0]['ev']);
-    var r1 = $.compute(d[1]['tte'], d[1]['ev']);
+    var r0 = survival.compute(d[0]['tte'], d[0]['ev']);
+    var r1 = survival.compute(d[1]['tte'], d[1]['ev']);
     var d0 = [[0, 1]].concat(r0.map(function(x) { return [x['t'], x['s']]}));
     var d1 = [[0, 1]].concat(r1.map(function(x) { return [x['t'], x['s']]}));
   </script>
@@ -29,10 +31,18 @@
    <script src="https://fastly.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
 
 
-<div id="main" style="width: 800px;height:600px;"></div>
+<div id="surv_plot" style="width: 800px;height:600px;"></div>
+<div style="width: 800px;height:600px;">
+  <table id="surv_table"> </table>
+</div>
+
 <script type="text/javascript">
+
+      var d = [{"tte": [59,115,156,431,448,477,638,803,855,1040,1106,268,329], "ev": [1,1,1,1,0,0,1,0,0,0,0,1,1]},
+             {"tte": [421,464,475,563,744,769,770,1129,1206,1227,353,365,377] , "ev": [0,1,1,1,0,0,0,0,0,0,1,1,0] }];
+
   // Initialize the echarts instance based on the prepared dom
-  var myChart = echarts.init(document.getElementById('main'));
+  var myChart = echarts.init(document.getElementById('surv_plot'));
 
   var option;
 
@@ -63,16 +73,26 @@ option = {
   },
   series: [
     {
-      name: 'RX=1',
+      name: groupLabel[0],
       type: 'line',
       step: 'end',
       data: d0
     },
     {
-      name: 'RX=2',
+      name: groupLabel[1],
       type: 'line',
       step: 'end',
       data: d1
+    }
+  ],
+  graphic: [
+    {
+      type: 'text',
+      left: '10%',          
+      top: '90%',
+      style: {
+        text: 'P-value = ' + survival.logranktest(d)['pValue'].toFixed(3)
+      }
     }
   ]
 };
@@ -83,7 +103,36 @@ if (option && typeof option === 'object') {
 
 window.addEventListener('resize', myChart.resize);
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  
+  var tte = [].concat(...d.map(function(x) { return x['tte']}));
+  var ev = [].concat(...d.map(function(x) { return x['ev']}));
+  var group = [].concat(...d.map( (element, idx) =>  { return element['tte'].map(function(xx){return groupLabel[idx]}); }));
 
+  function zip(...arrays) {
+  const length = Math.min(...arrays.map((arr) => arr.length));
+    return Array.from({ length }, (_, index) =>
+      arrays.map((array) => array[index])
+    );
+  }
+  // console.log("tte:", tte);
+  // console.log("ev:", ev);
+  // console.log("group:", group);
+  // console.log("data: ", zip(tte, ev, group));
+  // console.log("dataTable.data = ", zip([tte, ev, group]));
+  $(document).ready( function () {
+    $('#surv_table').DataTable({
+      data: zip(tte, ev, group),
+      columns: [
+        {title: "Time to event"},
+        {title: "Event indicator"},
+        {title: "Group"}
+      ]});
+  });
+
+</script>
 </body>
 
 </html>
